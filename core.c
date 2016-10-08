@@ -15,12 +15,14 @@ void lyfe_down(){
 }
 
 void lyfe_do(){
+	//pthread_t simthread;
+	//pthread_mutex_init(&lock)
+	//pthread_create(&simthread,NULL,sim_do,NULL);
+	int i=0;
 	do{
 		gfx_do();
 		ctrl_do();
-		if(SIM){
-			sim_do();
-			SDL_Delay(SPD * 10);
-		}
+		if((++i%(25*SPD))==0) sim_do();
 	} while(!QUIT);
+	//pthread_join(simthread,NULL);
 }

@@ -1,5 +1,5 @@
 #include "var.h"
-#include <stdio.h>
+#include <stddef.h>
 int normalize(int n, int min, int max){
 	int res;
 	if(n < min) res= n + max;
@@ -32,17 +32,29 @@ int neighbours(int x, int y, int dim){
 	return n;
 }
 
+//void *sim_do(void *args){
 void sim_do(){
 	int i,j,k;
-	if(DIM) k = 0;
-	else k = 1;
-	for(i=0;i<UNI_W;i++){
-		for(j=0;j<UNI_H;j++){
-			int n = neighbours(i,j,DIM);
-			int m = get_a(&uni_data,i,j,DIM);
-			if((m==0 && n==3)||(m==1 && n>1 && n<4)) set_a(&uni_data,i,j,k,1);
-			else set_a(&uni_data,i,j,k,0);
-		}
+	pt_ *n = top_q();
+	while(n != NULL){
+		set_a(&uni_data,n->x,n->y,DIM,n->val);
+		pop_q();
+		n = top_q();
 	}
-	DIM=k;
+	if(CLEAR){
+		clr_a();
+		CLEAR = 0;
+	}else if (SIM){
+		if(DIM) k = 0;
+		else k = 1;
+		for(i=0;i<UNI_W;i++){
+			for(j=0;j<UNI_H;j++){
+				int n = neighbours(i,j,DIM);
+				int m = get_a(&uni_data,i,j,DIM);
+				if((m==0 && n==3)||(m==1 && n>1 && n<4)) set_a(&uni_data,i,j,k,1);
+				else set_a(&uni_data,i,j,k,0);
+			}
+		}
+		DIM=k;
+	}
 }
