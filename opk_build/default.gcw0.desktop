@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=lyfe
+Comment=demo by com64
+Exec=./lyfe
+Icon=icon
+Categories=games;
