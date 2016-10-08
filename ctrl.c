@@ -48,6 +48,15 @@ extern void ctrl_do(){
 				case SDLK_LSHIFT:
 					SIM = 0;
 					break;
+				case SDLK_TAB:
+					if(SPD>1)SPD--;
+					break;
+				case SDLK_BACKSPACE:
+					SPD++;
+					break;
+				case SDLK_RETURN:
+					clr_a();
+					break;
 			}
 		}
 	}

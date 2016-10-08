@@ -12,17 +12,22 @@ int GRIDW = 8;
 int QUIT = 0;
 int SIM = 0;
 int DIM = 0;
+int SPD = 5;
 
 struct pt_ pt = {0,0};
 
 Char3d uni_data;
+
+void clr_a(){
+	memset(uni_data.data, 0, uni_data.x * uni_data.y * uni_data.dim * sizeof *uni_data.data);
+}
 
 void up_a(){
 	uni_data.x = UNI_W;
 	uni_data.y = UNI_H;
 	uni_data.dim = 2;
 	uni_data.data = malloc(uni_data.x * uni_data.y * uni_data.dim * sizeof *uni_data.data);
-	memset(uni_data.data, 0, uni_data.x * uni_data.y * uni_data.dim * sizeof *uni_data.data);
+	clr_a();
 }
 
 void set_a(Char3d *arr, int x, int y, int dim, char val){

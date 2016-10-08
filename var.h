@@ -1,6 +1,6 @@
 //herein lies global var
 extern const int SCREENW,SCREENH,SCREENBPP;
-extern int UNI_H,UNI_W,GRIDW,QUIT,SIM,DIM;
+extern int UNI_H,UNI_W,GRIDW,QUIT,SIM,DIM,SPD;
 
 struct pt_{int x,y;};
 
@@ -12,6 +12,7 @@ typedef struct {
 extern struct pt_ pt;
 extern Char3d uni_data;
 
+extern void clr_a();
 extern void up_a();
 extern void set_a(Char3d*,int,int,int,char);
 extern char get_a(Char3d*,int,int,int);

@@ -7,5 +7,7 @@ Controls:
 * X to stop simulation
 * A to add marker
 * B to remove marker
+* L to slow down
+* R to speed up
 * Select to quit
-
+* Start to clear

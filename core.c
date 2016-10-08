@@ -20,7 +20,7 @@ void lyfe_do(){
 		ctrl_do();
 		if(SIM){
 			sim_do();
-			SDL_Delay(30);
+			SDL_Delay(SPD * 10);
 		}
 	} while(!QUIT);
 }
