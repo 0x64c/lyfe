@@ -10,7 +10,6 @@ void lyfe_up(){
 }
 
 void lyfe_down(){
-	uni_down();
 	gfx_down();
 	down_a();
 }
