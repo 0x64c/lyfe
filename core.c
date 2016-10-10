@@ -2,7 +2,9 @@
 #include "var.h"
 #include "ctrl.h"
 #include "sim.h"
+#include "menu.h"
 #include <SDL/SDL.h>
+#include <stdio.h>
 
 void lyfe_up(){
 	up_a();
@@ -15,14 +17,28 @@ void lyfe_down(){
 }
 
 void lyfe_do(){
-	//pthread_t simthread;
-	//pthread_mutex_init(&lock)
-	//pthread_create(&simthread,NULL,sim_do,NULL);
-	int i=0;
+	unsigned int i=0,j=0,k=0,l=0;
 	do{
-		gfx_do();
-		ctrl_do();
-		if((++i%(25*SPD))==0) sim_do();
+		j=SDL_GetTicks();
+		if(j>l+10){
+			l=j;
+			ctrl_do();
+		}
+
+		j=SDL_GetTicks();
+		if(j>k+20){
+			k=j;
+			if(MENU==1) menu_up();
+			else if (MENU==2) menu_do();
+			else if(MENU==-1) menu_down();
+			gfx_do();
+		}
+
+		j=SDL_GetTicks();
+		if(j>i+SPD*20){
+			i=j;
+			sim_upd();
+			sim_do();
+		}
 	} while(!QUIT);
-	//pthread_join(simthread,NULL);
 }

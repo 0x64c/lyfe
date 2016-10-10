@@ -32,9 +32,7 @@ int neighbours(int x, int y, int dim){
 	return n;
 }
 
-//void *sim_do(void *args){
-void sim_do(){
-	int i,j,k;
+void sim_upd(){
 	pt_ *n = top_q();
 	while(n != NULL){
 		set_a(&uni_data,n->x,n->y,DIM,n->val);
@@ -44,7 +42,12 @@ void sim_do(){
 	if(CLEAR){
 		clr_a();
 		CLEAR = 0;
-	}else if (SIM){
+	}
+}
+//void *sim_do(void *args){
+void sim_do(){
+	int i,j,k;
+	if (SIM){
 		if(DIM) k = 0;
 		else k = 1;
 		for(i=0;i<UNI_W;i++){

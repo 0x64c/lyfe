@@ -14,6 +14,7 @@ int SIM = 0;
 int DIM = 0;
 int SPD = 5;
 int CLEAR = 0;
+int MENU = 0;
 
 pt_ pt = {0,0,0,NULL};
 pt_ *q_first = NULL;

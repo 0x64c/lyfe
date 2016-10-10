@@ -1,24 +1,76 @@
 #include <SDL2/SDL.h>
 #include "var.h"
-
+#include "menu.h"
 SDL_Event e;
-
-void ctrl_up(){
-	return;
-}
-
-void ctrl_down(){
-	return;
-}
 
 extern void ctrl_do(){
 	 while(SDL_PollEvent(&e)!=0){
 		if(e.type==SDL_QUIT){
 			QUIT = 1;
 		}else if(e.type==SDL_KEYDOWN){
+			if(MENU){
 			switch(e.key.keysym.sym){
+			//general
 				case SDLK_ESCAPE: //quit
 					QUIT = 1;
+					break;
+				case SDLK_SPACE: //start/stop sim
+					if(SIM)SIM = 0;
+					else SIM = 1;
+					break;
+				//case SDLK_LSHIFT:
+				//	break;
+				case SDLK_BACKSPACE: //speed up
+					if(SPD>1)SPD--;
+					break;
+				case SDLK_TAB: //slow down
+					if(SPD<100)SPD++;
+					break;
+				case SDLK_RETURN: //clear
+					CLEAR=1;
+					break;
+			//specific
+				case SDLK_LSHIFT: //menu
+					MENU=-1;
+					break;
+				case SDLK_LCTRL: //select
+					break;
+				case SDLK_LALT: //back
+					break;
+				case SDLK_UP: //cursor up
+					menu_ptu();
+					break;
+				case SDLK_DOWN: //cursor down
+					menu_ptd();
+					break;
+				case SDLK_LEFT: //cursor left
+					break;
+				case SDLK_RIGHT: //cursor right
+					break;
+			}}else{
+			switch(e.key.keysym.sym){
+			//general
+				case SDLK_ESCAPE: //quit
+					QUIT = 1;
+					break;
+				case SDLK_SPACE: //start/stop sim
+					if(SIM)SIM = 0;
+					else SIM = 1;
+					break;
+				//case SDLK_LSHIFT:
+				//	break;
+				case SDLK_BACKSPACE: //speed up
+					if(SPD>1)SPD--;
+					break;
+				case SDLK_TAB: //slow down
+					if(SPD<100)SPD++;
+					break;
+				case SDLK_RETURN: //clear
+					CLEAR=1;
+					break;
+			//specific
+				case SDLK_LSHIFT: //menu
+					MENU=1;
 					break;
 				case SDLK_LCTRL: //place selection
 					//set_a(&uni_data,pt.x,pt.y,DIM,1);
@@ -44,22 +96,7 @@ extern void ctrl_do(){
 					if(pt.x<UNI_W-1) pt.x++;
 					else pt.x=0;
 					break;
-				case SDLK_SPACE: //start sim
-					SIM = 1;
-					break;
-				case SDLK_LSHIFT: //pause sim
-					SIM = 0;
-					break;
-				case SDLK_TAB: //speed up
-					if(SPD>1)SPD--;
-					break;
-				case SDLK_BACKSPACE: //slow down
-					if(SPD<150)SPD++;
-					break;
-				case SDLK_RETURN: //clear
-					CLEAR=1;
-					break;
-			}
+			}}
 		}
 	}
 }

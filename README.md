@@ -3,8 +3,8 @@ Conway's game of life for the GCW
 
 Controls:
 * DPAD cor cursor movement
-* Y to start simulation
-* X to stop simulation
+* Y to start/stop simulation
+* X to open/close menu
 * A to add marker
 * B to remove marker
 * L to slow down

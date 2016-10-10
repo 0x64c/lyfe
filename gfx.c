@@ -1,16 +1,81 @@
 //look, look with your special eyes
 #include "SDL2/SDL.h"
 //#include <SDL/SDL_image.h>
-//#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_ttf.h>
 #include "var.h"
+#include "menu.h"
+
+#ifdef _GCW_
+char fontfile[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+#else
+char fontfile[] = "/usr/share/fonts/TTF/DejaVuSansMono.ttf";
+//"/usr/share/fonts/adobe-source-code-pro/SourceCodePro-Medium.otf";
+//"/usr/share/fonts/TTF/LiberationMono-Regular.ttf";
+#endif
+char fontfile2[] = "./DejaVuSansMono.ttf";
+
 
 SDL_Window *window = NULL;
 SDL_Surface *screen = NULL;
 SDL_Renderer *renderer = NULL;
+int menuw = 100;
+int menuh = 100;
+int menubw = 3;
+TTF_Font *font;
+typedef struct texlist{
+	SDL_Texture* tex;
+	SDL_Rect rect;
+	struct texlist* next;
+} texlist;
+texlist *first;
 
-/*void drawmenu(){
-	
-}*/
+void makemenu(){
+	first = (struct texlist *)malloc(sizeof(texlist));
+	int textw=0,texth=0;
+	texlist *prev;
+	SDL_Color textcolour = {0x00,0x00,0xFF};
+	int cx = SCREENW/2 -menuw/2+menuw/10;
+	int cy = SCREENH/2 -menuh/2-1;
+	for(int i=0;i<10;i++){
+		SDL_Surface *messagebox = TTF_RenderText_Solid(font,menu_lineget(i),textcolour);
+		SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);
+		SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
+		SDL_Rect r4 = {cx,cy+i*10,textw,texth};
+		if(i==0){
+			first->tex = message;
+			first->rect = r4;
+			first->next = NULL;
+			prev = first;
+		}else{
+			texlist *new = (struct texlist *)malloc(sizeof(texlist));
+			new->tex = message;
+			new->rect = r4;
+			new->next = NULL;
+			prev->next = new;
+			prev = new;
+		}
+		SDL_FreeSurface(messagebox);
+	}
+}
+
+void drawmenu(){
+	SDL_Rect r = {SCREENW/2 -menuw/2,SCREENH/2 -menuh/2,menuw,menuh};
+	SDL_Rect r2 = {SCREENW/2 -menuw/2 -menubw,SCREENH/2 -menuh/2 -menubw,menuw+2*menubw,menuh+2*menubw};
+	SDL_SetRenderDrawColor(renderer,0x00,0x00,0x00,0xFF);
+	SDL_RenderFillRect(renderer,&r2);
+	SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+	SDL_RenderFillRect(renderer,&r);
+	int curx = SCREENH/2 -menuh/2+4+((menuh/10)*menu_ptget());
+	int cury = SCREENW/2 -menuw/2+(menuw/20);
+	SDL_Rect r3 = {cury-1,curx-1,5,5};
+	SDL_SetRenderDrawColor(renderer,0x80,0x10,0x10,0xFF);
+	SDL_RenderFillRect(renderer,&r3);
+	texlist *current = first;
+	while(current!=NULL){
+		SDL_RenderCopy(renderer,current->tex,NULL,&current->rect);
+		current = current->next;
+	}
+}
 
 //draw the grid
 void drawfield(){
@@ -43,14 +108,31 @@ void drawcursor(){
 
 void gfx_up(){
 	SDL_Init(SDL_INIT_VIDEO);
+	TTF_Init();
 	window = SDL_CreateWindow("Lyfe",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,SCREENW,SCREENH,SDL_WINDOW_SHOWN);
 	screen = SDL_GetWindowSurface(window);
 	renderer = SDL_CreateSoftwareRenderer(screen);
+	font = TTF_OpenFont(fontfile,10);
+	if(font == NULL)
+		font = TTF_OpenFont(fontfile2,10);
+	makemenu();
+}
+
+void deltexlist(texlist *current){
+	if(current == NULL) return;
+	else if(current->next != NULL){
+		deltexlist(current->next);
+	}
+	free(current->tex);
+	free(current);
 }
 
 void gfx_down(){
+	deltexlist(first);
 	SDL_FreeSurface(screen);
 	SDL_DestroyWindow(window);
+	TTF_CloseFont(font);
+	TTF_Quit();
 }
 
 //draw the pixels
@@ -70,5 +152,6 @@ void gfx_do(){
 	drawfield();
 	drawfore();
 	drawcursor();
+	if(MENU>1)drawmenu();
 	SDL_UpdateWindowSurface(window);
 }
