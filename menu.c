@@ -1,8 +1,16 @@
 #include "var.h"
 #include <stddef.h>
-
 pt_ menupt;
-const int menusize = 10;
+const int menusize = 6;
+
+char* str[]={
+	"GAME MENU",
+	"Set Speed: ",
+	"Pause Sim",
+	"Clear Screen",
+	"Close Dialogue",
+	"Exit Game"
+};
 
 void menu_up(){
 	//MENU=1;
@@ -14,7 +22,29 @@ void menu_down(){
 	//MENU=-1;
 	MENU=0;
 }
-
+void menu_set(int amt){
+	switch (menupt.x){
+		case 0:
+		break;
+		case 1:
+			if(amt>0&&SPD+amt>SPDMAX) SPD=SPDMAX;
+			else if(amt<0&&SPD+amt<SPDMIN) SPD=SPDMIN;
+			else SPD+=amt;
+		break;
+		case 2:
+			if(amt){if(SIM)SIM--;else SIM++;}
+		break;
+		case 3:
+			if(amt)CLEAR=1;
+		break;
+		case 4:
+			if(amt)MENU=-1;
+		break;
+		case 5:
+			if(amt)QUIT=1;
+		break;
+	}
+}
 void menu_do(){
 	return;
 }
@@ -32,26 +62,5 @@ int menu_ptget(){
 }
 
 char* menu_lineget(int in){
-	switch(in){
-		case 0:
-			return "TOPKEK";
-		case 1:
-			return "TOPKEK+1";
-		case 2:
-			return "TOPKEK+2";
-		case 3:
-			return "TOPKEK+3";
-		case 4:
-			return "TOPKEK+4";
-		case 5:
-			return "TOPKEK+5";
-		case 6:
-			return "TOPKEK+6";
-		case 7:
-			return "TOPKEK+7";
-		case 8:
-			return "TOPKEK+8";
-		case 9:
-			return "TOPKEK+9";
-	}
+	return str[in];
 }

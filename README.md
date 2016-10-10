@@ -11,3 +11,10 @@ Controls:
 * R to speed up
 * Select to quit
 * Start to clear
+
+Menu Controls:
+* A/B to increment/decrement by 1
+* DPAD Left/Right to increment/decrement by 10
+* DPAD Up/Down to traverse
+* X to close menu
+* Select to quit

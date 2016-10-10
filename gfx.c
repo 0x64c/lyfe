@@ -4,6 +4,7 @@
 #include <SDL/SDL_ttf.h>
 #include "var.h"
 #include "menu.h"
+#include "SDL_FontCache.h"
 
 #ifdef _GCW_
 char fontfile[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
@@ -21,27 +22,29 @@ SDL_Renderer *renderer = NULL;
 int menuw = 100;
 int menuh = 100;
 int menubw = 3;
-TTF_Font *font;
-typedef struct texlist{
+//TTF_Font *font;
+FC_Font *font;
+/*typedef struct texlist{
 	SDL_Texture* tex;
 	SDL_Rect rect;
 	struct texlist* next;
 } texlist;
-texlist *first;
+texlist *first;*/
 
-void makemenu(){
+/*void makemenu(){
 	first = (struct texlist *)malloc(sizeof(texlist));
 	int textw=0,texth=0;
 	texlist *prev;
 	SDL_Color textcolour = {0x00,0x00,0xFF};
 	int cx = SCREENW/2 -menuw/2+menuw/10;
 	int cy = SCREENH/2 -menuh/2-1;
-	for(int i=0;i<10;i++){
-		SDL_Surface *messagebox = TTF_RenderText_Solid(font,menu_lineget(i),textcolour);
+	//for(int i=0;i<10;i++){
+	for(int i=10;i--;){
+		SDL_Surface *messagebox = TTF_RenderText_Solid(font,menu_lineget(9-i),textcolour);
 		SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);
 		SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
-		SDL_Rect r4 = {cx,cy+i*10,textw,texth};
-		if(i==0){
+		SDL_Rect r4 = {cx,cy+(9-i)*10,textw,texth};
+		if(i==9){
 			first->tex = message;
 			first->rect = r4;
 			first->next = NULL;
@@ -56,7 +59,7 @@ void makemenu(){
 		}
 		SDL_FreeSurface(messagebox);
 	}
-}
+}*/
 
 void drawmenu(){
 	SDL_Rect r = {SCREENW/2 -menuw/2,SCREENH/2 -menuh/2,menuw,menuh};
@@ -70,10 +73,17 @@ void drawmenu(){
 	SDL_Rect r3 = {cury-1,curx-1,5,5};
 	SDL_SetRenderDrawColor(renderer,0x80,0x10,0x10,0xFF);
 	SDL_RenderFillRect(renderer,&r3);
-	texlist *current = first;
+	/*texlist *current = first;
 	while(current!=NULL){
 		SDL_RenderCopy(renderer,current->tex,NULL,&current->rect);
 		current = current->next;
+	}*/
+
+	int cx = SCREENW/2 -menuw/2+menuw/10;
+	int cy = SCREENH/2 -menuh/2-1;
+	for(int i=0;i<menusize;i++){
+		if(i==1) FC_DrawAlign(font,renderer,cx,cy+i*10,FC_ALIGN_LEFT,"%s%d",menu_lineget(i),100-SPD);
+		else FC_DrawAlign(font,renderer,cx,cy+i*10,FC_ALIGN_LEFT,"%s",menu_lineget(i));
 	}
 }
 
@@ -112,35 +122,39 @@ void gfx_up(){
 	window = SDL_CreateWindow("Lyfe",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,SCREENW,SCREENH,SDL_WINDOW_SHOWN);
 	screen = SDL_GetWindowSurface(window);
 	renderer = SDL_CreateSoftwareRenderer(screen);
-	font = TTF_OpenFont(fontfile,10);
-	if(font == NULL)
-		font = TTF_OpenFont(fontfile2,10);
-	makemenu();
+	font = FC_CreateFont();
+	if(!FC_LoadFont(font,renderer,fontfile,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL))
+		FC_LoadFont(font,renderer,fontfile2,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL);
+	//makemenu();
 }
 
-void deltexlist(texlist *current){
+/*void deltexlist(texlist *current){
 	if(current == NULL) return;
 	else if(current->next != NULL){
 		deltexlist(current->next);
 	}
 	free(current->tex);
 	free(current);
-}
+}*/
 
 void gfx_down(){
-	deltexlist(first);
+	//deltexlist(first);
+	FC_FreeFont(font);
 	SDL_FreeSurface(screen);
 	SDL_DestroyWindow(window);
-	TTF_CloseFont(font);
 	TTF_Quit();
 }
 
 //draw the pixels
 void drawfore(){
 	int i,j;
-	for(i=0;i<UNI_W;i++){
-		for(j=0;j<UNI_H;j++){
-			SDL_Rect r = {5+GRIDW*i,5+GRIDW*j,GRIDW-1,GRIDW-1};
+	SDL_Rect r = {0,0,GRIDW-1,GRIDW-1};
+	//for(i=0;i<UNI_W;i++){
+	for(i=UNI_W;i--;){
+		//for(j=0;j<UNI_H;j++){
+		for(j=UNI_H;j--;){
+			//SDL_Rect r = {5+GRIDW*i,5+GRIDW*j,GRIDW-1,GRIDW-1};
+			r.x=5+GRIDW*i; r.y=5+GRIDW*j;
 			if(get_a(&uni_data,i,j,DIM)>0) SDL_SetRenderDrawColor(renderer,0xAB,0xEB,0x6A,0xFF);//green
 			else SDL_SetRenderDrawColor(renderer,0xEB,0x6A,0x6A,0xFF);//red
 			SDL_RenderFillRect(renderer,&r);

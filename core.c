@@ -23,6 +23,7 @@ void lyfe_do(){
 		if(j>l+10){
 			l=j;
 			ctrl_do();
+			sim_upd();
 		}
 
 		j=SDL_GetTicks();
@@ -37,7 +38,6 @@ void lyfe_do(){
 		j=SDL_GetTicks();
 		if(j>i+SPD*20){
 			i=j;
-			sim_upd();
 			sim_do();
 		}
 	} while(!QUIT);

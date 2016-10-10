@@ -15,27 +15,29 @@ extern void ctrl_do(){
 					QUIT = 1;
 					break;
 				case SDLK_SPACE: //start/stop sim
-					if(SIM)SIM = 0;
-					else SIM = 1;
+					//if(SIM)SIM = 0;
+					//else SIM = 1;
 					break;
 				//case SDLK_LSHIFT:
 				//	break;
 				case SDLK_BACKSPACE: //speed up
-					if(SPD>1)SPD--;
+					//if(SPD>1)SPD--;
 					break;
 				case SDLK_TAB: //slow down
-					if(SPD<100)SPD++;
+					//if(SPD<100)SPD++;
 					break;
 				case SDLK_RETURN: //clear
-					CLEAR=1;
+					//CLEAR=1;
 					break;
 			//specific
 				case SDLK_LSHIFT: //menu
 					MENU=-1;
 					break;
 				case SDLK_LCTRL: //select
+					menu_set(1);
 					break;
 				case SDLK_LALT: //back
+					menu_set(-1);
 					break;
 				case SDLK_UP: //cursor up
 					menu_ptu();
@@ -44,8 +46,10 @@ extern void ctrl_do(){
 					menu_ptd();
 					break;
 				case SDLK_LEFT: //cursor left
+					menu_set(-10);
 					break;
 				case SDLK_RIGHT: //cursor right
+					menu_set(10);
 					break;
 			}}else{
 			switch(e.key.keysym.sym){
@@ -60,10 +64,10 @@ extern void ctrl_do(){
 				//case SDLK_LSHIFT:
 				//	break;
 				case SDLK_BACKSPACE: //speed up
-					if(SPD>1)SPD--;
+					if(SPD>SPDMIN)SPD--;
 					break;
 				case SDLK_TAB: //slow down
-					if(SPD<100)SPD++;
+					if(SPD<SPDMAX)SPD++;
 					break;
 				case SDLK_RETURN: //clear
 					CLEAR=1;

@@ -13,6 +13,8 @@ int QUIT = 0;
 int SIM = 0;
 int DIM = 0;
 int SPD = 5;
+int SPDMIN = 1;
+int SPDMAX = 100;
 int CLEAR = 0;
 int MENU = 0;
 
@@ -43,7 +45,7 @@ void pop_q(){
 	}
 }
 
-void push_q(char x, char y, char val){
+void push_q(unsigned short x, unsigned short y, unsigned short val){
 	if(q_last == NULL){
 		q_last = (struct pt_ *)malloc(sizeof(pt_));
 		q_last->next = NULL;
@@ -74,10 +76,10 @@ void up_a(){
 	clr_a();
 }
 
-void set_a(Char3d *arr, int x, int y, int dim, char val){
+void set_a(Char3d *arr, int x, int y, int dim, unsigned short val){
 	arr->data[x * (arr->y * arr->dim) + y * arr->dim + dim] = val;
 }
-char get_a(Char3d *arr, int x, int y, int dim){
+unsigned short get_a(Char3d *arr, int x, int y, int dim){
 	return arr->data[x * (arr->y * arr->dim) + y * arr->dim + dim];
 }
 

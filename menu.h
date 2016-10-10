@@ -6,3 +6,5 @@ extern void menu_ptd();
 extern int menu_ptget();
 extern char* menu_lineget(int);
 extern const int menusize;
+extern void menu_set(int);
+
