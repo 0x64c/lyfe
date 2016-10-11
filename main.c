@@ -1,4 +1,3 @@
-//#include "var.h"
 #include "core.h"
 
 int main()

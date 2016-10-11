@@ -4,6 +4,7 @@
 #include "ctrl.h"
 #include "sim.h"
 #include "menu.h"
+#include "rumbl.h"
 
 void lyfe_up(){
 	up_a();
