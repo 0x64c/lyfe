@@ -18,8 +18,8 @@ EXE = lyfe
 OPK = $(EXE).opk
 RM = rm -f
 
-LDFLAGS += -lSDL2 -lSDL2_image -lSDL2_ttf $(shell $(SDL_CONFIG) --libs)
-CFLAGS += $(shell $(SDL_CONFIG) --cflags)
+LDFLAGS += -lshake -lSDL2 -lSDL2_image -lSDL2_ttf $(shell $(SDL_CONFIG) --libs)
+CFLAGS += -O2 $(shell $(SDL_CONFIG) --cflags)
 
 
 REMOTE_USER=root

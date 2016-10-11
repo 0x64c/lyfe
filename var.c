@@ -1,10 +1,8 @@
-//herein lies global var
 #include "var.h"
 #include <stdlib.h>
 #include <string.h>
 const int SCREENW = 320;
 const int SCREENH = 240;
-const int SCREENBPP = 16;
 
 int UNI_W = 39;
 int UNI_H = 29;
@@ -17,6 +15,7 @@ int SPDMIN = 1;
 int SPDMAX = 100;
 int CLEAR = 0;
 int MENU = 0;
+int RUMBL = 0;
 
 pt_ pt = {0,0,0,NULL};
 pt_ *q_first = NULL;

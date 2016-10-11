@@ -4,8 +4,8 @@ pt_ menupt;
 const int menusize = 6;
 
 char* str[]={
-	"GAME MENU",
-	"Set Speed: ",
+	"Rumble: ",
+	"Sim Delay: ",
 	"Pause Sim",
 	"Clear Screen",
 	"Close Dialogue",
@@ -25,6 +25,8 @@ void menu_down(){
 void menu_set(int amt){
 	switch (menupt.x){
 		case 0:
+			if(amt>0)RUMBL=1;
+			else RUMBL=0;
 		break;
 		case 1:
 			if(amt>0&&SPD+amt>SPDMAX) SPD=SPDMAX;
@@ -32,16 +34,16 @@ void menu_set(int amt){
 			else SPD+=amt;
 		break;
 		case 2:
-			if(amt){if(SIM)SIM--;else SIM++;}
+			if(amt>0){if(SIM)SIM--;else SIM++;}
 		break;
 		case 3:
-			if(amt)CLEAR=1;
+			if(amt>0)CLEAR=1;
 		break;
 		case 4:
-			if(amt)MENU=-1;
+			if(amt>0)MENU=-1;
 		break;
 		case 5:
-			if(amt)QUIT=1;
+			if(amt>0)QUIT=1;
 		break;
 	}
 }

@@ -14,21 +14,6 @@ extern void ctrl_do(){
 				case SDLK_ESCAPE: //quit
 					QUIT = 1;
 					break;
-				case SDLK_SPACE: //start/stop sim
-					//if(SIM)SIM = 0;
-					//else SIM = 1;
-					break;
-				//case SDLK_LSHIFT:
-				//	break;
-				case SDLK_BACKSPACE: //speed up
-					//if(SPD>1)SPD--;
-					break;
-				case SDLK_TAB: //slow down
-					//if(SPD<100)SPD++;
-					break;
-				case SDLK_RETURN: //clear
-					//CLEAR=1;
-					break;
 			//specific
 				case SDLK_LSHIFT: //menu
 					MENU=-1;
@@ -61,8 +46,6 @@ extern void ctrl_do(){
 					if(SIM)SIM = 0;
 					else SIM = 1;
 					break;
-				//case SDLK_LSHIFT:
-				//	break;
 				case SDLK_BACKSPACE: //speed up
 					if(SPD>SPDMIN)SPD--;
 					break;

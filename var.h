@@ -1,6 +1,5 @@
-//herein lies global var
 extern const int SCREENW,SCREENH,SCREENBPP;
-extern int UNI_H,UNI_W,GRIDW,QUIT,SIM,DIM,SPD,SPDMIN,SPDMAX,CLEAR,MENU;
+extern int UNI_H,UNI_W,GRIDW,QUIT,SIM,DIM,SPD,SPDMIN,SPDMAX,CLEAR,MENU,RUMBL;
 
 typedef struct pt_{
 	unsigned short x,y,val;

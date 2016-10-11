@@ -1,4 +1,5 @@
 #include "var.h"
+#include "rumbl.h"
 #include <stddef.h>
 int normalize(int n, int min, int max){
 	int res;
@@ -62,5 +63,6 @@ void sim_do(){
 			}
 		}
 		DIM=k;
+		rumbl_do();
 	}
 }
