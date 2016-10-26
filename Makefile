@@ -9,6 +9,7 @@ $(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build. ***)
 SDL_CONFIG=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/bin/sdl2-config
 TOOLCHAIN=/opt/gcw0-toolchain/usr/bin/mipsel-linux-
 LIB_INCLUDE=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/lib
+CFLAGS+= -D_GCW_
 endif
 
 OPK_DIR=opk_build
@@ -20,10 +21,10 @@ OPK = $(EXE).opk
 RM = rm -f
 
 LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
-CFLAGS += -g3 $(shell $(SDL_CONFIG) --cflags)
+CFLAGS += -g3 $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 REMOTE_USER=root
-REMOTE_IP=192.168.2.105
+REMOTE_IP=192.168.0.156
 REMOTE_PATH=/media/GCW_EXT/apps
 
 SRCS=$(shell echo *.c)

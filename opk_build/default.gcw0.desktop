@@ -2,6 +2,6 @@
 Type=Application
 Name=lyfe
 Comment=demo by com64
-Exec=./lyfe
+Exec=./start.sh
 Icon=icon
 Categories=games;

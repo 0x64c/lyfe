@@ -3,6 +3,7 @@
 #include "var.h"
 #include "menu.h"
 #include "SDL_FontCache.h"
+#include <stdio.h>
 
 #ifdef _GCW_
 char fontfile[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
@@ -91,10 +92,12 @@ void drawmenu(){
 	SDL_RenderCopy(renderer,menu_tex,NULL,&r_menu_b);
 	SDL_RenderCopy(renderer,menu_c_tex,NULL,&r_menu_c);
 	for(int i=0;i<menusize;i++){
+		//printf("drawing menu\n");
 		if(i==1) FC_DrawAlign(font,renderer,c_menu_text_x,r_menu.y+i*10,FC_ALIGN_LEFT,"%s%d",menu_lineget(i),SPD);
-		else if(i==0) FC_DrawAlign(font,renderer,c_menu_text_x,r_menu.y+i*10,FC_ALIGN_LEFT,"%s%d",menu_lineget(i),RUMBL);
+		else if(i==0) FC_DrawAlign(font,renderer,(float)(c_menu_text_x),(float)(r_menu.y+i*10),FC_ALIGN_LEFT,"%s%d",menu_lineget(i),RUMBL);
 		else FC_DrawAlign(font,renderer,c_menu_text_x,r_menu.y+i*10,FC_ALIGN_LEFT,"%s",menu_lineget(i));
 	}
+	//FC_Draw(font,renderer,0,0,"TEXT IS BEST");
 }
 
 //draw the grid
@@ -112,10 +115,17 @@ void gfx_up(){
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	window = SDL_CreateWindow("Lyfe",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,SCREENW,SCREENH,SDL_WINDOW_SHOWN);
+#ifndef _GCW_
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+#else
+	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE | SDL_RENDERER_TARGETTEXTURE);
+#endif
 	font = FC_CreateFont();
-	if(!FC_LoadFont(font,renderer,fontfile,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL))
-		FC_LoadFont(font,renderer,fontfile2,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL);
+	if(!FC_LoadFont(font,renderer,fontfile,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL)){
+		printf("Loading second font.\n");
+		if(!FC_LoadFont(font,renderer,fontfile2,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL))
+			printf("Failed to load second font!\n");
+	}
 	init_gfx_obj();
 }
 
