@@ -17,25 +17,26 @@ extern void ctrl_do(){
 					break;
 			//specific
 				case SDLK_LSHIFT: //menu
+					if(e.key.repeat)break;
 					MENU=-1;
 					break;
 				case SDLK_LCTRL: //select
-					menu_set(1);
+					menu_set(1,e.key.repeat);
 					break;
 				case SDLK_LALT: //back
-					menu_set(-1);
+					menu_set(-1,e.key.repeat);
 					break;
 				case SDLK_UP: //cursor up
-					menu_ptu();
+					menu_ptu(e.key.repeat);
 					break;
 				case SDLK_DOWN: //cursor down
-					menu_ptd();
+					menu_ptd(e.key.repeat);
 					break;
 				case SDLK_LEFT: //cursor left
-					menu_set(-10);
+					menu_set(-10,e.key.repeat);
 					break;
 				case SDLK_RIGHT: //cursor right
-					menu_set(10);
+					menu_set(10,e.key.repeat);
 					break;
 			}}else{
 			switch(e.key.keysym.sym){
@@ -45,6 +46,7 @@ extern void ctrl_do(){
 					playsnd(SFX_SEL);
 					break;
 				case SDLK_SPACE: //start/stop sim
+					if(e.key.repeat)break;
 					if(SIM){SIM = 0; playsnd(SFX_STOP);}
 					else{SIM = 1; playsnd(SFX_START);}
 					break;
@@ -61,14 +63,17 @@ extern void ctrl_do(){
 					break;
 			//specific
 				case SDLK_LSHIFT: //menu
+					if(e.key.repeat)break;
 					MENU=1;
 					break;
 				case SDLK_LCTRL: //place selection
+					if(e.key.repeat)break;
 					set_a(&uni_data,pt.x,pt.y,DIM,1);
 					playsnd(SFX_SEL);
 					//push_q(pt.x,pt.y,1);
 					break;
 				case SDLK_LALT: //remove selection
+					if(e.key.repeat)break;
 					set_a(&uni_data,pt.x,pt.y,DIM,0);
 					playsnd(SFX_SEL);
 					//push_q(pt.x,pt.y,0);

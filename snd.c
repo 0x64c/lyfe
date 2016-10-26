@@ -3,8 +3,10 @@
 #include <SDL2/SDL_mixer.h>
 
 Mix_Chunk *sfx_cur=NULL,*sfx_sel=NULL,*sfx_nop=NULL,*sfx_up=NULL,*sfx_down=NULL,*sfx_start=NULL,*sfx_stop=NULL,*sfx_clr;
+int lastplayedtime,lastplayedsound;
 
 void playsnd(WHICHSOUND sound){
+	if(((SDL_GetTicks()-lastplayedtime)<100)&&lastplayedsound==sound) return;
 	switch(sound){
 		case SFX_CUR: Mix_PlayChannel(-1,sfx_cur,0);
 		break;
@@ -23,6 +25,8 @@ void playsnd(WHICHSOUND sound){
 		case SFX_CLR: Mix_PlayChannel(-1,sfx_clr,0);
 		break;
 	}
+	lastplayedtime=SDL_GetTicks();
+	lastplayedsound=sound;
 }
 
 void snd_up(){
@@ -36,6 +40,8 @@ void snd_up(){
 	sfx_start=Mix_LoadWAV("sfx/sfx_start.ogg");
 	sfx_stop=Mix_LoadWAV("sfx/sfx_stop.ogg");
 	sfx_clr=Mix_LoadWAV("sfx/sfx_clr.ogg");
+	lastplayedtime=SDL_GetTicks();
+	lastplayedsound=-1;
 }
 
 void snd_down(){

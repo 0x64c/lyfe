@@ -1,4 +1,4 @@
-extern const int SCREENW,SCREENH,SCREENBPP;
+extern const int SCREENW,SCREENH,FONTSIZE;
 extern int UNI_H,UNI_W,GRIDW,QUIT,SIM,DIM,SPD,SPDMIN,SPDMAX,CLEAR,MENU,RUMBL;
 
 typedef struct pt_{

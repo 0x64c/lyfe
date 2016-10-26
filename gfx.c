@@ -2,7 +2,6 @@
 #include <SDL2/SDL_ttf.h>
 #include "var.h"
 #include "menu.h"
-#include "SDL_FontCache.h"
 #include <stdio.h>
 
 #ifdef _GCW_
@@ -14,14 +13,50 @@ char fontfile2[] = "./DejaVuSansMono.ttf";
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-int menuw = 100;
-int menuh = 100;
+int menuw;// = 10*FONTSIZE;
+int menuh;// = (menusize+2)*FONTSIZE;
 int menubw = 3;
-FC_Font *font;
+
+TTF_Font *font;
+SDL_Texture **menutext_tex;
+SDL_Rect **menutext_rect;
+SDL_Color textcolour = {000,000,255,255};
+
 SDL_Rect r_menu,r_menu_b,r_menu_c,r_c_tex,r_p_tex,r_p_tex2,r_g_tex;
 int c_menu_x,c_menu_text_x;
 
 SDL_Texture *c_tex,*p_tex,*g_tex,*menu_tex,*menu_c_tex;
+
+void updatemenu(int line){
+	int textw=0,texth=0;
+	SDL_Surface *messagebox;
+	char buffer[20];
+	switch(line){
+		case 0:
+			sprintf(buffer,"%s%d",menu_lineget(line),RUMBL);
+			messagebox = TTF_RenderText_Solid(font,buffer,textcolour);
+			break;
+		case 1:
+			sprintf(buffer,"%s%d",menu_lineget(line),SPD);
+			messagebox = TTF_RenderText_Solid(font,buffer,textcolour);
+			break;
+		case 2:
+			sprintf(buffer,"%s%d",menu_lineget(line),SIM);
+			messagebox = TTF_RenderText_Solid(font,buffer,textcolour);
+			break;		
+		default:
+			messagebox = TTF_RenderText_Solid(font,menu_lineget(line),textcolour);
+			break;
+	}
+	SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);
+	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
+	menutext_rect[line]->x=c_menu_text_x;
+	menutext_rect[line]->y=r_menu.y+line*FONTSIZE;
+	menutext_rect[line]->w=textw;
+	menutext_rect[line]->h=texth;
+	menutext_tex[line] = message;
+	SDL_FreeSurface(messagebox);
+}
 
 void init_gfx_obj(){
 	//menu
@@ -85,19 +120,20 @@ void init_gfx_obj(){
 	SDL_RenderFillRect(renderer,&r_menu_tex);
 
 	SDL_SetRenderTarget(renderer,NULL);
+	//menutext
+	for(int i=0;i<menusize;i++){
+		menutext_rect[i]=malloc(sizeof(SDL_Rect));
+		updatemenu(i);
+	}
 }
 
 void drawmenu(){
-	r_menu_c.y=r_menu.y+4+(menuh/10)*menu_ptget();
+	r_menu_c.y=r_menu.y+4+FONTSIZE*menu_ptget();
 	SDL_RenderCopy(renderer,menu_tex,NULL,&r_menu_b);
 	SDL_RenderCopy(renderer,menu_c_tex,NULL,&r_menu_c);
 	for(int i=0;i<menusize;i++){
-		//printf("drawing menu\n");
-		if(i==1) FC_DrawAlign(font,renderer,c_menu_text_x,r_menu.y+i*10,FC_ALIGN_LEFT,"%s%d",menu_lineget(i),SPD);
-		else if(i==0) FC_DrawAlign(font,renderer,(float)(c_menu_text_x),(float)(r_menu.y+i*10),FC_ALIGN_LEFT,"%s%d",menu_lineget(i),RUMBL);
-		else FC_DrawAlign(font,renderer,c_menu_text_x,r_menu.y+i*10,FC_ALIGN_LEFT,"%s",menu_lineget(i));
+		SDL_RenderCopy(renderer,menutext_tex[i],NULL,menutext_rect[i]);
 	}
-	//FC_Draw(font,renderer,0,0,"TEXT IS BEST");
 }
 
 //draw the grid
@@ -112,6 +148,8 @@ void drawcursor(){
 }
 
 void gfx_up(){
+	menuw = 10*FONTSIZE;
+	menuh = (menusize)*FONTSIZE+3;
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	window = SDL_CreateWindow("Lyfe",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,SCREENW,SCREENH,SDL_WINDOW_SHOWN);
@@ -120,17 +158,18 @@ void gfx_up(){
 #else
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE | SDL_RENDERER_TARGETTEXTURE);
 #endif
-	font = FC_CreateFont();
-	if(!FC_LoadFont(font,renderer,fontfile,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL)){
-		printf("Loading second font.\n");
-		if(!FC_LoadFont(font,renderer,fontfile2,10,FC_MakeColor(0,0,255,255),TTF_STYLE_NORMAL))
-			printf("Failed to load second font!\n");
-	}
+	font = TTF_OpenFont(fontfile,FONTSIZE);
+	if(!font) TTF_OpenFont(fontfile2,FONTSIZE);
+	menutext_rect = malloc(menusize * sizeof(SDL_Rect*));
+	menutext_tex = malloc(menusize * sizeof(SDL_Texture*));
 	init_gfx_obj();
 }
 
 void gfx_down(){
-	FC_FreeFont(font);
+	for(int i=0;i<menusize;i++){
+		SDL_DestroyTexture(menutext_tex[i]);
+		free(menutext_rect[i]);
+	}
 	SDL_DestroyTexture(c_tex);
 	SDL_DestroyTexture(p_tex);
 	SDL_DestroyTexture(g_tex);

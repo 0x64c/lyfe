@@ -1,5 +1,6 @@
 #include "var.h"
 #include "snd.h"
+#include "gfx.h"
 #include <stddef.h>
 pt_ menupt;
 const int menusize = 6;
@@ -7,7 +8,7 @@ const int menusize = 6;
 char* str[]={
 	"Rumble: ",
 	"Sim Delay: ",
-	"Pause Sim",
+	"Sim ON/OFF: ",
 	"Clear Screen",
 	"Close Dialogue",
 	"Exit Game"
@@ -18,6 +19,7 @@ void menu_up(){
 	menupt.x=0,menupt.y=0,menupt.val=menusize,menupt.next=NULL;
 	MENU=2;
 	playsnd(SFX_UP);
+	for(int i=0;i<3;i++)updatemenu(i);
 }
 
 void menu_down(){
@@ -25,29 +27,32 @@ void menu_down(){
 	MENU=0;
 	playsnd(SFX_DOWN);
 }
-void menu_set(int amt){
+void menu_set(int amt,int repeat){
 	int temp;
 	switch (menupt.x){
 		case 0:
 			temp=RUMBL;
 			if(amt>0)RUMBL=1;
 			else RUMBL=0;
-			if(RUMBL!=temp) playsnd(SFX_SEL);
-			else playsnd(SFX_NOP);
+			if(RUMBL!=temp){playsnd(SFX_SEL);updatemenu(menupt.x);}
+			else if(!repeat) playsnd(SFX_NOP);
 		break;
 		case 1:
-			if(amt>0&&SPD+amt>SPDMAX){SPD=SPDMAX;playsnd(SFX_NOP);}
-			else if(amt<0&&SPD+amt<SPDMIN){SPD=SPDMIN;playsnd(SFX_NOP);}
-			else{SPD+=amt;playsnd(SFX_SEL);}
+			temp=SPD;
+			if(amt>0&&SPD+amt>SPDMAX)SPD=SPDMAX;
+			else if(amt<0&&SPD+amt<SPDMIN)SPD=SPDMIN;
+			else SPD+=amt;
+			if(temp!=SPD){updatemenu(menupt.x);playsnd(SFX_SEL);}
+			else if(!repeat) playsnd(SFX_NOP);
 		break;
 		case 2:
-			if(amt>0){if(SIM){SIM--;playsnd(SFX_STOP);}else{SIM++;playsnd(SFX_START);}}
+			if(!repeat){if(SIM){SIM--;playsnd(SFX_STOP);updatemenu(menupt.x);}else{SIM++;playsnd(SFX_START);updatemenu(menupt.x);}}
 		break;
 		case 3:
-			if(amt>0){clr_a();playsnd(SFX_CLR);}//CLEAR=1;
+			if(!repeat){clr_a();playsnd(SFX_CLR);}//CLEAR=1;
 		break;
 		case 4:
-			if(amt>0) MENU=-1;
+			/*if(amt>0)*/ MENU=-1;
 		break;
 		case 5:
 			if(amt>0) QUIT=1;
@@ -58,14 +63,14 @@ void menu_do(){
 	return;
 }
 
-void menu_ptu(){
+void menu_ptu(int repeat){
 	if(menupt.x>0){menupt.x--;playsnd(SFX_SEL);}
-	else playsnd(SFX_NOP);
+	else if(!repeat) playsnd(SFX_NOP);
 }
 
-void menu_ptd(){
+void menu_ptd(int repeat){
 	if(menupt.x<menupt.val-1){menupt.x++;playsnd(SFX_SEL);}
-	else playsnd(SFX_NOP);
+	else if(!repeat) playsnd(SFX_NOP);
 }
 
 int menu_ptget(){

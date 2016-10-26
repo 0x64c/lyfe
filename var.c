@@ -3,6 +3,7 @@
 #include <string.h>
 const int SCREENW = 320;
 const int SCREENH = 240;
+const int FONTSIZE = 12;
 
 int UNI_W = 39;
 int UNI_H = 29;
