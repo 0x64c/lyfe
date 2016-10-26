@@ -3,6 +3,7 @@ $(info *** Defaulting to PC version. Specify PLATFORM=GCW for GCW build. ***)
 SDL_CONFIG=/usr/bin/sdl2-config
 TOOLCHAIN=
 LIB_INCLUDE=/usr/lib
+CFLAGS+= -D_GCW_
 else
 $(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build. ***)
 SDL_CONFIG=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/bin/sdl2-config
@@ -18,9 +19,8 @@ EXE = lyfe
 OPK = $(EXE).opk
 RM = rm -f
 
-LDFLAGS += -lshake -lSDL2 -lSDL2_image -lSDL2_ttf $(shell $(SDL_CONFIG) --libs)
-CFLAGS += -O2 $(shell $(SDL_CONFIG) --cflags)
-
+LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
+CFLAGS += -g3 $(shell $(SDL_CONFIG) --cflags)
 
 REMOTE_USER=root
 REMOTE_IP=192.168.2.105
@@ -39,7 +39,7 @@ ALL : $(EXE)
 $(EXE) : $(OBJS)
 	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
 	mkdir -p $(OPK_DIR)
-	$(STRIP) $(EXE)
+#	$(STRIP) $(EXE)
 	cp $(EXE) $(OPK_DIR)/$(EXE)
 
 opk : $(EXE)

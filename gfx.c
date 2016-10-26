@@ -1,5 +1,5 @@
 #include "SDL2/SDL.h"
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include "var.h"
 #include "menu.h"
 #include "SDL_FontCache.h"

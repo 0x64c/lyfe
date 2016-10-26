@@ -5,17 +5,20 @@
 #include "sim.h"
 #include "menu.h"
 #include "rumbl.h"
+#include "snd.h"
 
 void lyfe_up(){
 	up_a();
 	gfx_up();
+	snd_up();
 	rumbl_up();
 }
 
 void lyfe_down(){
+	rumbl_down();
+	snd_down();
 	gfx_down();
 	down_a();
-	rumbl_down();
 	SDL_Quit();
 }
 
@@ -26,7 +29,7 @@ void lyfe_do(){
 		if(j>l+10){
 			l=j;
 			ctrl_do();
-			sim_upd();
+			//sim_upd();
 		}
 
 		j=SDL_GetTicks();

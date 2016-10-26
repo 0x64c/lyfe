@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include "var.h"
 #include "menu.h"
+#include "snd.h"
 SDL_Event e;
 
 extern void ctrl_do(){
@@ -41,47 +42,56 @@ extern void ctrl_do(){
 			//general
 				case SDLK_ESCAPE: //quit
 					QUIT = 1;
+					playsnd(SFX_SEL);
 					break;
 				case SDLK_SPACE: //start/stop sim
-					if(SIM)SIM = 0;
-					else SIM = 1;
+					if(SIM){SIM = 0; playsnd(SFX_STOP);}
+					else{SIM = 1; playsnd(SFX_START);}
 					break;
 				case SDLK_BACKSPACE: //speed up
-					if(SPD>SPDMIN)SPD--;
+					if(SPD>SPDMIN){SPD--;playsnd(SFX_CUR);}
 					break;
 				case SDLK_TAB: //slow down
-					if(SPD<SPDMAX)SPD++;
+					if(SPD<SPDMAX){SPD++;playsnd(SFX_CUR);}
 					break;
 				case SDLK_RETURN: //clear
-					CLEAR=1;
+					//CLEAR=1;
+					clr_a();
+					playsnd(SFX_CLR);
 					break;
 			//specific
 				case SDLK_LSHIFT: //menu
 					MENU=1;
 					break;
 				case SDLK_LCTRL: //place selection
-					//set_a(&uni_data,pt.x,pt.y,DIM,1);
-					push_q(pt.x,pt.y,1);
+					set_a(&uni_data,pt.x,pt.y,DIM,1);
+					playsnd(SFX_SEL);
+					//push_q(pt.x,pt.y,1);
 					break;
 				case SDLK_LALT: //remove selection
-					//set_a(&uni_data,pt.x,pt.y,DIM,0);
-					push_q(pt.x,pt.y,0);
+					set_a(&uni_data,pt.x,pt.y,DIM,0);
+					playsnd(SFX_SEL);
+					//push_q(pt.x,pt.y,0);
 					break;
 				case SDLK_UP: //cursor up
 					if(pt.y>0) pt.y--;
 					else pt.y=UNI_H-1;
+					playsnd(SFX_CUR);
 					break;
 				case SDLK_DOWN: //cursor down
 					if(pt.y<UNI_H-1) pt.y++;
 					else pt.y=0;
+					playsnd(SFX_CUR);
 					break;
 				case SDLK_LEFT: //cursor left
 					if(pt.x>0) pt.x--;
 					else pt.x=UNI_W-1;
+					playsnd(SFX_CUR);
 					break;
 				case SDLK_RIGHT: //cursor right
 					if(pt.x<UNI_W-1) pt.x++;
 					else pt.x=0;
+					playsnd(SFX_CUR);
 					break;
 			}}
 		}
