@@ -42,7 +42,7 @@ void lyfe_do(){
 		}
 
 		j=SDL_GetTicks();
-		if(j>i+SPD*25){
+		if(j>i+SPD*10){
 			i=j;
 			sim_do();
 		}
