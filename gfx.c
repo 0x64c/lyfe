@@ -6,13 +6,16 @@
 
 #ifdef _GCW_
 char fontfile[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+char fontfile2[] = "./DejaVuSansMono.ttf";
 #else
 char fontfile[] = "/usr/share/fonts/TTF/DejaVuSansMono.ttf";
 #endif
-char fontfile2[] = "./DejaVuSansMono.ttf";
+
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+SDL_Renderer *renderer2 = NULL;
+SDL_Surface *surface = NULL;
 int menuw;// = 10*FONTSIZE;
 int menuh;// = (menusize+2)*FONTSIZE;
 int menubw = 3;
@@ -50,85 +53,111 @@ void updatemenu(int line){
 	}
 	SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);
 	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
-	menutext_rect[line]->x=c_menu_text_x;
-	menutext_rect[line]->y=r_menu.y+line*FONTSIZE;
+	menutext_rect[line]->x=SCREENW/2-menuw/2+menuw/10;
+	menutext_rect[line]->y=r_menu_b.y+3+line*FONTSIZE;
 	menutext_rect[line]->w=textw;
 	menutext_rect[line]->h=texth;
 	menutext_tex[line] = message;
 	SDL_FreeSurface(messagebox);
 }
 
-void init_gfx_obj(){
-	//menu
-	r_menu.x=SCREENW/2 -menuw/2; r_menu.y=SCREENH/2 -menuh/2; r_menu.w=menuw; r_menu.h=menuh;
-	r_menu_b.x=SCREENW/2 -menuw/2 -menubw; r_menu_b.y=SCREENH/2 -menuh/2 -menubw; r_menu_b.w=menuw+2*menubw; r_menu_b.h=menuh+2*menubw;
-	r_menu_c.y=0;
-	r_menu_c.w=5;
-	r_menu_c.h=5;
-	c_menu_x = r_menu.x+(menuw/20);
-	c_menu_text_x=r_menu.x+menuw/10;
-	r_menu_c.x=c_menu_x-4;
-	//cursor
-	r_c_tex.x=0;r_c_tex.y=0;r_c_tex.w=GRIDW+1;r_c_tex.h=GRIDW+1;
-	c_tex = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,r_c_tex.w,r_c_tex.h);
-	SDL_SetRenderTarget(renderer,c_tex);
-	SDL_SetTextureBlendMode(c_tex,SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(renderer,0x00,0x00,0x00,0xFF);//black
-	SDL_RenderDrawLine(renderer,0,0,8,8); //diag
-	SDL_RenderDrawLine(renderer,0,8,8,0); //diag	
-	SDL_SetRenderDrawColor(renderer,0x6A,0xEB,0xEB,0xFF);//blue
-	SDL_Point points[]={{.x=0,.y=0},{.x=8,.y=0},{.x=8,.y=8},{.x=0,.y=8},{.x=0,.y=0}};
-	SDL_RenderDrawLines(renderer,points,5);
-	//pixels
-	r_p_tex.x=0;r_p_tex.y=0;r_p_tex.w=GRIDW-1;r_p_tex.h=GRIDW-1;
-	r_p_tex2.x=0;r_p_tex2.y=0;r_p_tex2.w=GRIDW-1;r_p_tex2.h=GRIDW-1;
-	p_tex = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,r_p_tex.w*2,r_p_tex.h);
-	SDL_SetRenderTarget(renderer,p_tex);
-	SDL_SetRenderDrawColor(renderer,0xAB,0xEB,0x6A,0xFF);//green
-	SDL_RenderFillRect(renderer,&r_p_tex);
-	SDL_SetRenderDrawColor(renderer,0xEB,0x6A,0x6A,0xFF);//red
-	r_p_tex.x+=r_p_tex.w;
-	SDL_RenderFillRect(renderer,&r_p_tex);;
-	//grid
-	r_g_tex.x=0;r_g_tex.y=0;r_g_tex.w=320;r_g_tex.h=240;
-	g_tex = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,r_g_tex.w,r_g_tex.h);
-	SDL_SetRenderTarget(renderer,g_tex);
-	SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF); //white
-	SDL_RenderFillRect(renderer,&r_g_tex);
-	SDL_SetRenderDrawColor(renderer,0x00,0x00,0x00,0xFF); //black
+SDL_Rect draw_cursor(){
+	int width = GRIDW;
+	SDL_Rect rect={0,0,width+1,width+1};
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0xFF);//black
+	SDL_RenderDrawLine(renderer2,0,0,width,width); //diag
+	SDL_RenderDrawLine(renderer2,0,width,width,0); //diag	
+	SDL_SetRenderDrawColor(renderer2,0x6A,0xEB,0xEB,0xFF);//blue
+	SDL_Point points[]={{.x=0,.y=0},{.x=width,.y=0},{.x=width,.y=width},{.x=0,.y=width},{.x=0,.y=0}};
+	SDL_RenderDrawLines(renderer2,points,5);
+	return rect;
+}
+SDL_Rect draw_pixels(){
+	SDL_Rect rect={0,0,GRIDW-1,GRIDW-1};
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,0xAB,0xEB,0x6A,0xFF);//green
+	SDL_RenderFillRect(renderer2,&rect);
+	SDL_SetRenderDrawColor(renderer2,0xEB,0x6A,0x6A,0xFF);//red
+	rect.x+=rect.w;
+	SDL_RenderFillRect(renderer2,&rect);
+	rect.x-=rect.w;
+	rect.w+=rect.w;
+	return rect;
+}
+SDL_Rect draw_grid(){
+	SDL_Rect rect={0,0,320,240};
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,0xFF,0xFF,0xFF,0xFF); //white
+	SDL_RenderFillRect(renderer2,&rect);
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0xFF); //black
 	int i;
 	for(i=4;i<=SCREENH-4;i=i+GRIDW){
-		SDL_RenderDrawLine(renderer,4,i,SCREENW-4,i);
+		SDL_RenderDrawLine(renderer2,4,i,SCREENW-4,i);
 	}
 	for(i=4;i<=SCREENW-4;i=i+GRIDW){
-		SDL_RenderDrawLine(renderer,i,4,i,SCREENH-4);
+		SDL_RenderDrawLine(renderer2,i,4,i,SCREENH-4);
 	}
-	//menubg
-	SDL_Rect r_menu_tex={0,0,r_menu_b.w,r_menu_b.h};
-	menu_tex = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,r_menu_tex.w,r_menu_tex.h);
-	SDL_SetRenderTarget(renderer,menu_tex);
-	SDL_SetRenderDrawColor(renderer,0x00,0x00,0x00,0xFF);//black
-	SDL_RenderFillRect(renderer,&r_menu_tex);
-	SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);//white
-	r_menu_tex.x+=menubw;r_menu_tex.y+=menubw;r_menu_tex.w-=2*menubw;r_menu_tex.h-=2*menubw;
-	SDL_RenderFillRect(renderer,&r_menu_tex);
-	//menupt
-	r_menu_tex.x=0;r_menu_tex.y=0;r_menu_tex.w=r_menu_c.w;r_menu_tex.h=r_menu_c.h;
-	menu_c_tex = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,r_menu_tex.w,r_menu_tex.h);
-	SDL_SetRenderTarget(renderer,menu_c_tex);
-	SDL_SetRenderDrawColor(renderer,0x80,0x10,0x10,0xFF);
-	SDL_RenderFillRect(renderer,&r_menu_tex);
+	return rect;
+}
+SDL_Rect draw_menubg(){
+	SDL_Rect rect={0,0,menuw+2*menubw,menuh+2*menubw};
+	SDL_Rect rect2={menubw,menubw,menuw,menuh};
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0xFF);//black
+	SDL_RenderFillRect(renderer2,&rect);
+	SDL_SetRenderDrawColor(renderer2,0xFF,0xFF,0xFF,0xFF);//white
+	SDL_RenderFillRect(renderer2,&rect2);
+	return rect;
+}
+SDL_Rect draw_menupt(){
+	SDL_Rect rect={0,0,5,5};
+	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,0x80,0x10,0x10,0xFF);
+	SDL_RenderFillRect(renderer2,&rect);
+	return rect;
+}
+SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
+	SDL_Rect rect = draw();
+	SDL_Surface *dummy_surface = SDL_CreateRGBSurface(0,rect.w,rect.h,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	SDL_BlitSurface(surface,&rect,dummy_surface,NULL);
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer,dummy_surface);
+	SDL_FreeSurface(dummy_surface);
+	rect2->x=rect.x;
+	rect2->y=rect.y;
+	rect2->w=rect.w;
+	rect2->h=rect.h;
+	return tex;
+}
 
-	SDL_SetRenderTarget(renderer,NULL);
-	//menutext
+void init_gfx_obj(){
+	surface = SDL_CreateRGBSurface(0,320,240,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	renderer2 = SDL_CreateSoftwareRenderer(surface);
+
+	menu_tex = draw_sprite(&r_menu_b,(*draw_menubg));
+	menu_c_tex = draw_sprite(&r_menu_c,(*draw_menupt));
+	p_tex = draw_sprite(&r_p_tex,(*draw_pixels));
+	c_tex = draw_sprite(&r_c_tex,(*draw_cursor));
+	g_tex = draw_sprite(&r_g_tex,(*draw_grid));
+
+	r_menu_b.x=SCREENW/2 -menuw/2 -menubw;
+	r_menu_b.y=SCREENH/2 -menuh/2 -menubw;
+	r_p_tex2.x=r_p_tex.x;
+	r_p_tex2.y=r_p_tex.y;
+	r_p_tex.w=r_p_tex2.w=r_p_tex.w/2;
+	r_p_tex2.h=r_p_tex.h;
+
 	for(int i=0;i<menusize;i++){
 		menutext_rect[i]=malloc(sizeof(SDL_Rect));
 		updatemenu(i);
 	}
+	SDL_FreeSurface(surface);
+	SDL_DestroyRenderer(renderer2);
 }
 
 void drawmenu(){
-	r_menu_c.y=r_menu.y+4+FONTSIZE*menu_ptget();
+	r_menu_c.y=r_menu_b.y+8+FONTSIZE*menu_ptget();
+	r_menu_c.x=r_menu_b.x+(menuw/20);
 	SDL_RenderCopy(renderer,menu_tex,NULL,&r_menu_b);
 	SDL_RenderCopy(renderer,menu_c_tex,NULL,&r_menu_c);
 	for(int i=0;i<menusize;i++){
@@ -153,13 +182,11 @@ void gfx_up(){
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	window = SDL_CreateWindow("Lyfe",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,SCREENW,SCREENH,SDL_WINDOW_SHOWN);
-#ifndef _GCW_
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-#else
-	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_SOFTWARE | SDL_RENDERER_TARGETTEXTURE);
-#endif
 	font = TTF_OpenFont(fontfile,FONTSIZE);
+#ifndef _GCW_
 	if(!font) TTF_OpenFont(fontfile2,FONTSIZE);
+#endif
 	menutext_rect = malloc(menusize * sizeof(SDL_Rect*));
 	menutext_tex = malloc(menusize * sizeof(SDL_Texture*));
 	init_gfx_obj();

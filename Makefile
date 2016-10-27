@@ -20,7 +20,7 @@ OPK = $(EXE).opk
 RM = rm -f
 
 LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
-CFLAGS += -O2 $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+CFLAGS += -O3 $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 REMOTE_USER=root
 REMOTE_IP=192.168.0.156

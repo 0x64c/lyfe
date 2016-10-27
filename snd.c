@@ -3,7 +3,7 @@
 #include <SDL2/SDL_mixer.h>
 
 Mix_Chunk *sfx_cur=NULL,*sfx_sel=NULL,*sfx_nop=NULL,*sfx_up=NULL,*sfx_down=NULL,*sfx_start=NULL,*sfx_stop=NULL,*sfx_clr;
-int lastplayedtime,lastplayedsound;
+unsigned int lastplayedtime,lastplayedsound;
 
 void playsnd(WHICHSOUND sound){
 	if(((SDL_GetTicks()-lastplayedtime)<100)&&lastplayedsound==sound) return;
