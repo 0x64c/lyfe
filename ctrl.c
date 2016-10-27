@@ -58,6 +58,7 @@ extern void ctrl_do(){
 					break;
 				case SDLK_RETURN: //clear
 					//CLEAR=1;
+					if(e.key.repeat)break;
 					clr_a();
 					playsnd(SFX_CLR);
 					break;
