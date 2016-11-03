@@ -22,9 +22,9 @@ int MOVEMAP_X=0;
 int MOVEMAP_Y=0;
 int MAP_X=0;
 int MAP_Y=0;
-unsigned short vismask=0x1;
-unsigned short neighbourmask=0x1E;
-unsigned short neighbourflagmask=0x20;
+unsigned short vismask=0x1;		//0b 0000 0001
+unsigned short neighbourmask=0x1E;	//0b 0001 1110
+unsigned short neighbourflagmask=0x20;	//0b 0010 0000
 
 Char3d uni_data;
 pt_ pt = {0,0,0,NULL};
@@ -58,8 +58,6 @@ void up_a(){
 void set_a(Char3d *arr,unsigned short x,unsigned short y,unsigned short val,unsigned short mask){
 	arr->data[x * arr->y + y] = 
 		(arr->data[x * arr->y + y] &~mask) | (val&mask);
-	//0x1	vis
-	//0x6	neighbours
 }
 unsigned short get_a(Char3d *arr,unsigned short x,unsigned short y){
 	return arr->data[x * arr->y + y];

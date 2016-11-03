@@ -106,14 +106,12 @@ void ctrl_do(){
 						set_a(&uni_data,pt.x+MAP_X,pt.y+MAP_Y,1,vismask);
 						updateneighbourflags(pt.x+MAP_X,pt.y+MAP_Y);
 						playsnd(SFX_SEL);
-						//push_q(pt.x,pt.y,1);
 						break;
 					case SDLK_LALT: //remove selection
 						if(e.key.repeat)break;
 						set_a(&uni_data,pt.x+MAP_X,pt.y+MAP_Y,0,vismask);
 						updateneighbourflags(pt.x+MAP_X,pt.y+MAP_Y);
 						playsnd(SFX_SEL);
-						//push_q(pt.x,pt.y,0);
 						break;
 					case SDLK_UP: //cursor up
 						if(pt.y>0) pt.y--;
