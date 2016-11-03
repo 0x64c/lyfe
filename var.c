@@ -4,10 +4,11 @@
 const int SCREENW = 320;
 const int SCREENH = 240;
 const int FONTSIZE = 12;
+const int JOYDEADZONE = 3200;
+const int JOYTHRESHOLD = 15000;
 
-int UNI_W = 39;
-int UNI_H = 29;
-int GRIDW = 8;
+int UNI_W,UNI_H,BORDERW,BORDERH,DISPH,DISPW;
+int GRIDW = 10;
 int QUIT = 0;
 int SIM = 0;
 int DIM = 0;
@@ -17,72 +18,56 @@ int SPDMAX = 100;
 int CLEAR = 0;
 int MENU = 0;
 int RUMBL = 0;
-
-pt_ pt = {0,0,0,NULL};
-pt_ *q_first = NULL;
-pt_ *q_last = NULL;
-pt_ *q_tempy = NULL;
-pt_ *q_tempy2 = NULL;
+int MOVEMAP_X=0;
+int MOVEMAP_Y=0;
+int MAP_X=0;
+int MAP_Y=0;
+unsigned short vismask=0x1;
+unsigned short neighbourmask=0x1E;
+unsigned short neighbourflagmask=0x20;
 
 Char3d uni_data;
+pt_ pt = {0,0,0,NULL};
 
-pt_* top_q(){
-	if(q_first == NULL) return NULL;
-	return q_first;
-}
-
-void pop_q(){
-	if(q_first!=NULL){
-		if(q_first->next != NULL){
-			q_tempy2 = q_first->next;
-			free(q_first);
-			q_first = q_tempy2;
-		}else{
-			free(q_first);
-			q_first = NULL;
-			q_last = NULL;
-		}
-	}
-}
-
-void push_q(unsigned short x, unsigned short y, unsigned short val){
-	if(q_last == NULL){
-		q_last = (struct pt_ *)malloc(sizeof(pt_));
-		q_last->next = NULL;
-		q_last->x = x;
-		q_last->y = y;
-		q_last->val = val;
-		q_first = q_last;
-	}else{
-		q_tempy = (struct pt_ *)malloc(sizeof(pt_));
-		q_last->next = q_tempy;
-		q_tempy->x = x;
-		q_tempy->y = y;
-		q_tempy->val = val;
-		q_tempy->next = NULL;
-		q_last = q_tempy;
-	}
+void displaybox_do(){
+	MAP_X=MAP_X + MOVEMAP_X;//*(DISPW/2);
+	MAP_Y=MAP_Y + MOVEMAP_Y;//*(DISPH/2);
+	if(MAP_X<0)MAP_X=0;
+	else if(MAP_X>UNI_W-DISPW)MAP_X=UNI_W-DISPW;
+	if(MAP_Y<0)MAP_Y=0;
+	else if(MAP_Y>UNI_H-DISPH)MAP_Y=UNI_H-DISPH;
 }
 
 void clr_a(){
-	memset(uni_data.data, 0, uni_data.x * uni_data.y * uni_data.dim * sizeof *uni_data.data);
+	memset(uni_data.data, 0, uni_data.x * uni_data.y * (sizeof *uni_data.data));
 }
 
 void up_a(){
+	BORDERW=(SCREENW%GRIDW)/2;
+	BORDERH=(SCREENH%GRIDW)/2;
+	DISPW=SCREENW/GRIDW;
+	DISPH=SCREENH/GRIDW;
+	UNI_W=320;
+	UNI_H=240;
 	uni_data.x = UNI_W;
 	uni_data.y = UNI_H;
-	uni_data.dim = 2;
-	uni_data.data = malloc(uni_data.x * uni_data.y * uni_data.dim * sizeof *uni_data.data);
+	uni_data.data = malloc(uni_data.x * uni_data.y * sizeof *uni_data.data);
 	clr_a();
 }
 
-void set_a(Char3d *arr, int x, int y, int dim, unsigned short val){
-	arr->data[x * (arr->y * arr->dim) + y * arr->dim + dim] = val;
+void set_a(Char3d *arr,unsigned short x,unsigned short y,unsigned short val,unsigned short mask){
+	arr->data[x * arr->y + y] = 
+		(arr->data[x * arr->y + y] &~mask) | (val&mask);
+	//0x1	vis
+	//0x6	neighbours
 }
-unsigned short get_a(Char3d *arr, int x, int y, int dim){
-	return arr->data[x * (arr->y * arr->dim) + y * arr->dim + dim];
+unsigned short get_a(Char3d *arr,unsigned short x,unsigned short y){
+	return arr->data[x * arr->y + y];
 }
 
 void down_a(){
-	free(uni_data.data);
+	if(uni_data.data){
+		free(uni_data.data);
+		uni_data.data=NULL;
+	}
 }

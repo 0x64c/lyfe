@@ -9,16 +9,18 @@
 
 void lyfe_up(){
 	up_a();
+	ctrl_up();
 	gfx_up();
 	snd_up();
 	rumbl_up();
 }
 
 void lyfe_down(){
-	rumbl_down();
-	snd_down();
-	gfx_down();
 	down_a();
+	gfx_down();
+	rumbl_down();
+	ctrl_down();
+	snd_down();
 	SDL_Quit();
 }
 
@@ -29,7 +31,7 @@ void lyfe_do(){
 		if(j>l+10){
 			l=j;
 			ctrl_do();
-			//sim_upd();
+			displaybox_do();
 		}
 
 		j=SDL_GetTicks();
@@ -47,4 +49,5 @@ void lyfe_do(){
 			sim_do();
 		}
 	} while(!QUIT);
+	//SDL_Delay(1000);
 }

@@ -6,9 +6,9 @@
 
 #ifdef _GCW_
 char fontfile[] = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
-char fontfile2[] = "./DejaVuSansMono.ttf";
 #else
 char fontfile[] = "/usr/share/fonts/TTF/DejaVuSansMono.ttf";
+char fontfile2[] = "./DejaVuSansMono.ttf";
 #endif
 
 
@@ -46,6 +46,10 @@ void updatemenu(int line){
 		case 2:
 			sprintf(buffer,"%s%d",menu_lineget(line),SIM);
 			messagebox = TTF_RenderText_Solid(font,buffer,textcolour);
+			break;
+		case 4:
+			sprintf(buffer,"%s%d",menu_lineget(line),gridw);
+			messagebox = TTF_RenderText_Solid(font,buffer,textcolour);
 			break;		
 		default:
 			messagebox = TTF_RenderText_Solid(font,menu_lineget(line),textcolour);
@@ -63,18 +67,23 @@ void updatemenu(int line){
 
 SDL_Rect draw_cursor(){
 	int width = GRIDW;
+	if(GRIDW<3)width=3;
 	SDL_Rect rect={0,0,width+1,width+1};
 	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
 	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0xFF);//black
-	SDL_RenderDrawLine(renderer2,0,0,width,width); //diag
-	SDL_RenderDrawLine(renderer2,0,width,width,0); //diag	
-	SDL_SetRenderDrawColor(renderer2,0x6A,0xEB,0xEB,0xFF);//blue
+	if(GRIDW>2){
+		SDL_RenderDrawLine(renderer2,0,0,width,width); //diag
+		SDL_RenderDrawLine(renderer2,0,width,width,0); //diag
+		SDL_SetRenderDrawColor(renderer2,0x6A,0xEB,0xEB,0xFF);//blue
+	}
 	SDL_Point points[]={{.x=0,.y=0},{.x=width,.y=0},{.x=width,.y=width},{.x=0,.y=width},{.x=0,.y=0}};
 	SDL_RenderDrawLines(renderer2,points,5);
 	return rect;
 }
 SDL_Rect draw_pixels(){
-	SDL_Rect rect={0,0,GRIDW-1,GRIDW-1};
+	int i=GRIDW-1;
+//	if(GRIDW<3)i=2;
+	SDL_Rect rect={0,0,i,i};
 	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0x00);SDL_RenderClear(renderer2);
 	SDL_SetRenderDrawColor(renderer2,0xAB,0xEB,0x6A,0xFF);//green
 	SDL_RenderFillRect(renderer2,&rect);
@@ -91,15 +100,17 @@ SDL_Rect draw_grid(){
 	SDL_SetRenderDrawColor(renderer2,0xFF,0xFF,0xFF,0xFF); //white
 	SDL_RenderFillRect(renderer2,&rect);
 	SDL_SetRenderDrawColor(renderer2,0x00,0x00,0x00,0xFF); //black
+	if(GRIDW<3)return rect;
 	int i;
-	for(i=4;i<=SCREENH-4;i=i+GRIDW){
-		SDL_RenderDrawLine(renderer2,4,i,SCREENW-4,i);
+	for(i=0;i<=DISPH;i++){
+		SDL_RenderDrawLine(renderer2,BORDERW,BORDERH+i*GRIDW,SCREENW-BORDERW-1,BORDERH+i*GRIDW);
 	}
-	for(i=4;i<=SCREENW-4;i=i+GRIDW){
-		SDL_RenderDrawLine(renderer2,i,4,i,SCREENH-4);
+	for(i=0;i<=DISPW;i++){
+		SDL_RenderDrawLine(renderer2,BORDERW+i*GRIDW,BORDERH,BORDERW+i*GRIDW,SCREENH-BORDERH-1);
 	}
 	return rect;
 }
+
 SDL_Rect draw_menubg(){
 	SDL_Rect rect={0,0,menuw+2*menubw,menuh+2*menubw};
 	SDL_Rect rect2={menubw,menubw,menuw,menuh};
@@ -172,7 +183,10 @@ void drawfield(){
 
 //draw the cursor
 void drawcursor(){
-	r_c_tex.x=4+GRIDW*pt.x; r_c_tex.y=4+GRIDW*pt.y;
+	int i=GRIDW; int j=BORDERW; int k=BORDERH;
+	if(GRIDW<3){i=2;j=-1;}
+	r_c_tex.x=j+i*pt.x;
+	r_c_tex.y=k+i*pt.y;
 	SDL_RenderCopy(renderer,c_tex,NULL,&r_c_tex);
 }
 
@@ -192,6 +206,41 @@ void gfx_up(){
 	init_gfx_obj();
 }
 
+void gfx_resize(int gridw_){
+	SDL_DestroyTexture(c_tex);
+	SDL_DestroyTexture(p_tex);
+	SDL_DestroyTexture(g_tex);
+	SDL_DestroyTexture(menu_tex);
+	SDL_DestroyTexture(menu_c_tex);
+	GRIDW=gridw_;
+	BORDERW=(SCREENW%GRIDW)/2;
+	BORDERH=(SCREENH%GRIDW)/2;
+	DISPW=SCREENW/GRIDW;
+	DISPH=SCREENH/GRIDW;
+
+	surface = SDL_CreateRGBSurface(0,320,240,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	renderer2 = SDL_CreateSoftwareRenderer(surface);
+
+	menu_tex = draw_sprite(&r_menu_b,(*draw_menubg));
+	menu_c_tex = draw_sprite(&r_menu_c,(*draw_menupt));
+	p_tex = draw_sprite(&r_p_tex,(*draw_pixels));
+	c_tex = draw_sprite(&r_c_tex,(*draw_cursor));
+	g_tex = draw_sprite(&r_g_tex,(*draw_grid));
+
+	r_menu_b.x=SCREENW/2 -menuw/2 -menubw;
+	r_menu_b.y=SCREENH/2 -menuh/2 -menubw;
+	r_p_tex2.x=r_p_tex.x;
+	r_p_tex2.y=r_p_tex.y;
+	r_p_tex.w=r_p_tex2.w=r_p_tex.w/2;
+	r_p_tex2.h=r_p_tex.h;
+
+	SDL_FreeSurface(surface);
+	SDL_DestroyRenderer(renderer2);
+
+	if(pt.x>DISPW)pt.x=DISPW-1;
+	if(pt.y>DISPH)pt.y=DISPH-1;
+}
+
 void gfx_down(){
 	for(int i=0;i<menusize;i++){
 		SDL_DestroyTexture(menutext_tex[i]);
@@ -200,8 +249,11 @@ void gfx_down(){
 	SDL_DestroyTexture(c_tex);
 	SDL_DestroyTexture(p_tex);
 	SDL_DestroyTexture(g_tex);
+	SDL_DestroyTexture(menu_tex);
+	SDL_DestroyTexture(menu_c_tex);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	TTF_CloseFont(font);
 	TTF_Quit();
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
@@ -209,10 +261,14 @@ void gfx_down(){
 //draw the pixels
 void drawfore(){
 	int i,j;
-	for(i=UNI_W;i--;){
-		for(j=UNI_H;j--;){
-			r_p_tex2.y=5+GRIDW*j; r_p_tex2.x=5+GRIDW*i;
-			if(get_a(&uni_data,i,j,DIM)>0) r_p_tex.x=0;
+	int k=GRIDW;
+	int l=BORDERW+1;
+	int m=BORDERH+1;
+	if(k<3){k=2;l=0;}
+	for(i=DISPW;i--;){
+		for(j=DISPH;j--;){
+			r_p_tex2.y=m+k*j; r_p_tex2.x=l+k*i;
+			if((get_a(&uni_data,i+MAP_X,j+MAP_Y)&vismask)>0) r_p_tex.x=0;
 			else r_p_tex.x=r_p_tex.w;
 			SDL_RenderCopy(renderer,p_tex,&r_p_tex,&r_p_tex2);
 		}

@@ -3,13 +3,16 @@
 #include "gfx.h"
 #include <stddef.h>
 pt_ menupt;
-const int menusize = 6;
+const int menusize = 8;
+int gridw;
 
 char* str[]={
 	"Rumble: ",
 	"Sim Delay: ",
 	"Sim ON/OFF: ",
 	"Clear Screen",
+	"Grid Size: ",
+	"Commit Resize",
 	"Close Dialogue",
 	"Exit Game"
 };
@@ -17,9 +20,10 @@ char* str[]={
 void menu_up(){
 	//MENU=1;
 	menupt.x=0,menupt.y=0,menupt.val=menusize,menupt.next=NULL;
-	MENU=2;
+	MENU=2;	gridw=GRIDW;
 	playsnd(SFX_UP);
 	for(int i=0;i<3;i++)updatemenu(i);
+	updatemenu(4);
 }
 
 void menu_down(){
@@ -27,6 +31,7 @@ void menu_down(){
 	MENU=0;
 	playsnd(SFX_DOWN);
 }
+
 void menu_set(int amt,int repeat){
 	int temp;
 	switch (menupt.x){
@@ -52,9 +57,20 @@ void menu_set(int amt,int repeat){
 			if(!repeat){clr_a();playsnd(SFX_CLR);}//CLEAR=1;
 		break;
 		case 4:
-			/*if(amt>0)*/ MENU=-1;
+			gridw=gridw+amt;
+			if(gridw<3) gridw=3;
+			else if(gridw>SCREENH) gridw=SCREENH;
+			updatemenu(menupt.x);
+			playsnd(SFX_SEL);
 		break;
 		case 5:
+			gfx_resize(gridw);
+			playsnd(SFX_CLR);
+		break;
+		case 6:
+			/*if(amt>0)*/ MENU=-1;
+		break;
+		case 7:
 			if(amt>0) QUIT=1;
 		break;
 	}

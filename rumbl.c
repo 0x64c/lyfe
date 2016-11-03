@@ -9,10 +9,14 @@ void rumbl_up(){
 	Shake_Init();
 	if(Shake_NumOfDevices()>0){
 		device = Shake_Open(0);
-		Shake_SimpleRumble(&effect0,70.0,30.0,0.2);
+		Shake_SimplePeriodic(&effect0,SHAKE_PERIODIC_SINE,70,0.1,0.2,0.1);
+		Shake_SimplePeriodic(&effect1,SHAKE_PERIODIC_SINE,70,0.1,0.2,0.1);
+		Shake_SimplePeriodic(&effect2,SHAKE_PERIODIC_SINE,70,0.1,0.2,0.1);
+		Shake_SimplePeriodic(&effect3,SHAKE_PERIODIC_SINE,70,0.1,0.2,0.1);
+		/*Shake_SimpleRumble(&effect0,70.0,30.0,0.2);
 		Shake_SimpleRumble(&effect1,70.0,30.0,0.4);
 		Shake_SimpleRumble(&effect2,70.0,30.0,0.6);
-		Shake_SimpleRumble(&effect3,70.0,30.0,0.8);
+		Shake_SimpleRumble(&effect3,70.0,30.0,0.8);*/
 		id0 = Shake_UploadEffect(device, &effect0);
 		id1 = Shake_UploadEffect(device, &effect1);
 		id2 = Shake_UploadEffect(device, &effect2);

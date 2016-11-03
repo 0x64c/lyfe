@@ -7,24 +7,26 @@ unsigned int lastplayedtime,lastplayedsound;
 
 void playsnd(WHICHSOUND sound){
 	if(((SDL_GetTicks()-lastplayedtime)<100)&&lastplayedsound==sound) return;
+	Mix_Chunk *dummy;
 	switch(sound){
-		case SFX_CUR: Mix_PlayChannel(-1,sfx_cur,0);
+		case SFX_CUR: dummy=sfx_cur;
 		break;
-		case SFX_SEL: Mix_PlayChannel(-1,sfx_sel,0);
+		case SFX_SEL: dummy=sfx_sel;
 		break;
-		case SFX_NOP: Mix_PlayChannel(-1,sfx_nop,0);
+		case SFX_NOP: dummy=sfx_nop;
 		break;
-		case SFX_UP: Mix_PlayChannel(-1,sfx_up,0);
+		case SFX_UP: dummy=sfx_up;
 		break;
-		case SFX_DOWN: Mix_PlayChannel(-1,sfx_down,0);
+		case SFX_DOWN: dummy=sfx_down;
 		break;
-		case SFX_START: Mix_PlayChannel(-1,sfx_start,0);
+		case SFX_START: dummy=sfx_start;
 		break;
-		case SFX_STOP: Mix_PlayChannel(-1,sfx_stop,0);
+		case SFX_STOP: dummy=sfx_stop;
 		break;
-		case SFX_CLR: Mix_PlayChannel(-1,sfx_clr,0);
+		case SFX_CLR: dummy=sfx_clr;
 		break;
 	}
+	if(dummy)Mix_PlayChannel(-1,dummy,0);
 	lastplayedtime=SDL_GetTicks();
 	lastplayedsound=sound;
 }
@@ -45,14 +47,15 @@ void snd_up(){
 }
 
 void snd_down(){
-	Mix_FreeChunk(sfx_cur);
-	Mix_FreeChunk(sfx_sel);
-	Mix_FreeChunk(sfx_nop);
-	Mix_FreeChunk(sfx_up);
-	Mix_FreeChunk(sfx_down);
-	Mix_FreeChunk(sfx_start);
-	Mix_FreeChunk(sfx_stop);
-	Mix_FreeChunk(sfx_clr);
+	if(sfx_cur)Mix_FreeChunk(sfx_cur);
+	if(sfx_sel)Mix_FreeChunk(sfx_sel);
+	if(sfx_nop)Mix_FreeChunk(sfx_nop);
+	if(sfx_up)Mix_FreeChunk(sfx_up);
+	if(sfx_down)Mix_FreeChunk(sfx_down);
+	if(sfx_start)Mix_FreeChunk(sfx_start);
+	if(sfx_stop)Mix_FreeChunk(sfx_stop);
+	if(sfx_clr)Mix_FreeChunk(sfx_clr);
+	Mix_CloseAudio();
 	Mix_Quit();
 }
 
