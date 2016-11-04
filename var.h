@@ -1,5 +1,5 @@
 extern const int SCREENW,SCREENH,FONTSIZE,JOYDEADZONE,JOYTHRESHOLD;
-extern int UNI_H,UNI_W,GRIDW,BORDER,QUIT,SIM,DIM,SPD,SPDMIN,SPDMAX,CLEAR,MENU,RUMBL,MOVEMAP_X,MOVEMAP_Y,MAP_X,MAP_Y,BORDERW,BORDERH,DISPW,DISPH;
+extern int UNI_H,UNI_W,GRIDW,BORDER,QUIT,SIM,DIM,SPD,SPDMIN,SPDMAX,CLEAR,MENU,RUMBL,MOVEMAP_X,MOVEMAP_Y,MAP_X,MAP_Y,BORDERW,BORDERH,DISPW,DISPH,COLOUR;
 
 typedef struct pt_{
 	unsigned short x,y,val;
@@ -7,7 +7,7 @@ typedef struct pt_{
 } pt_;
 
 typedef struct{
-	unsigned short x,y,dim;
+	unsigned short x,y;
 	unsigned short *data;
 } Char3d;
 

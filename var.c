@@ -7,16 +7,15 @@ const int FONTSIZE = 12;
 const int JOYDEADZONE = 3200;
 const int JOYTHRESHOLD = 15000;
 
-int UNI_W,UNI_H,BORDERW,BORDERH,DISPH,DISPW;
+int UNI_W,UNI_H,BORDERW,BORDERH,DISPH,DISPW,COLOUR;
 int GRIDW = 10;
 int QUIT = 0;
 int SIM = 0;
-int DIM = 0;
 int SPD = 5;
 int SPDMIN = 1;
 int SPDMAX = 100;
 int CLEAR = 0;
-int MENU = 0;
+//int MENU = 0;
 int RUMBL = 0;
 int MOVEMAP_X=0;
 int MOVEMAP_Y=0;
