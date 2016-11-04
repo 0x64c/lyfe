@@ -74,7 +74,7 @@ void confirmcolour(int which){
 }
 void updatemenu(int line, MENU_CATEGORY category){
 	int textw=0,texth=0;
-	SDL_Surface *messagebox;
+	SDL_Surface *messagebox = NULL;
 	char buffer[20];
 	switch(category){
 		case MAIN_MENU:
@@ -130,6 +130,7 @@ void updatemenu(int line, MENU_CATEGORY category){
 		default:
 			break;
 	}
+	if(messagebox==NULL) return;
 	SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);
 	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
 	switch(category){

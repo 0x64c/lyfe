@@ -153,10 +153,11 @@ void menu_set(int amt,int repeat, MENU_CATEGORY category){
 		case COLOUR_MENU:
 			switch (menupt.x){
 				case 0:
-					if(amt<0) temp=COLOUR-1;
-					else if(amt>0) temp=COLOUR+1;
-					if(temp>=0&&temp<ncolours){
-						COLOUR=temp;
+					if(amt<0) temp=-1;
+					else if(amt>0) temp=1;
+					else temp=0;
+					if(temp+COLOUR>=0&&temp+COLOUR<ncolours){
+						COLOUR+=temp;
 						playsnd(SFX_SEL);
 						inittempcolour(COLOUR);
 						updatemenu(menupt.x,category);
